@@ -47,58 +47,68 @@ function drawHeart(){
   const h = canvas.height;
   const cx = w / 2;
   const cy = h / 2;
-  const scale = Math.min(w, h) * 0.38;
+
+  // 控制爱心大小
+  const baseScale = Math.min(w, h) * 0.38;
+
+  // 跳动效果：scale 在 0.92 ~ 1.08 之间变化
+  const beatScale = 0.92 + Math.sin(t) * 0.08;
+  const scale = baseScale * beatScale;
 
   ctx.clearRect(0, 0, w, h);
 
-  // 外层淡红光晕
+  // 外层红光
   ctx.beginPath();
   for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.01){
     const r = 1 - Math.cos(th);
-    const wave = Math.sin(th * 4 + t) * 0.015;
-    const x = cx + (r + wave) * Math.cos(th) * scale;
-    const y = cy - (r + wave) * Math.sin(th) * scale;
+
+    // 让爱心正着：旋转 90 度
+    const x = cx + r * Math.cos(th - Math.PI / 2) * scale;
+    const y = cy - r * Math.sin(th - Math.PI / 2) * scale;
+
     th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   }
   ctx.closePath();
-  ctx.fillStyle = 'rgba(255, 60, 90, 0.18)';
-  ctx.shadowColor = '#ff3c5a';
-  ctx.shadowBlur = 35;
+  ctx.fillStyle = 'rgba(255, 0, 30, 0.12)';
+  ctx.shadowColor = '#ff001e';
+  ctx.shadowBlur = 45;
   ctx.fill();
 
-  // 主体填充红心，带轻微波浪跳动
+  // 主体通红红心
+  ctx.shadowBlur = 25;
+  ctx.beginPath();
+  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
+    const r = 1 - Math.cos(th);
+
+    const x = cx + r * Math.cos(th - Math.PI / 2) * scale;
+    const y = cy - r * Math.sin(th - Math.PI / 2) * scale;
+
+    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#ff001e';
+  ctx.shadowColor = '#ff001e';
+  ctx.shadowBlur = 30;
+  ctx.fill();
+
+  // 内层高光，让红心更立体
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
+    const r = 1 - Math.cos(th);
+
+    const x = cx + r * 0.70 * Math.cos(th - Math.PI / 2) * scale;
+    const y = cy - r * 0.70 * Math.sin(th - Math.PI / 2) * scale;
+
+    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255, 180, 190, 0.35)';
+  ctx.shadowColor = 'rgba(255, 180, 190, 0.5)';
   ctx.shadowBlur = 18;
-  ctx.beginPath();
-  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
-    const r = 1 - Math.cos(th);
-    const wave = Math.sin(th * 6 + t) * 0.008;
-    const x = cx + (r + wave) * Math.cos(th) * scale;
-    const y = cy - (r + wave) * Math.sin(th) * scale;
-    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.fillStyle = '#ff3c5a';
-  ctx.shadowColor = '#ff3c5a';
-  ctx.shadowBlur = 20;
   ctx.fill();
 
-  // 内层柔和高光
-  ctx.shadowBlur = 8;
-  ctx.beginPath();
-  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
-    const r = 1 - Math.cos(th);
-    const wave = Math.sin(th * 6 + t) * 0.006;
-    const x = cx + (r * 0.72 + wave) * Math.cos(th) * scale;
-    const y = cy - (r * 0.72 + wave) * Math.sin(th) * scale;
-    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(255, 210, 220, 0.35)';
-  ctx.shadowColor = 'rgba(255, 210, 220, 0.6)';
-  ctx.shadowBlur = 15;
-  ctx.fill();
-
-  t += 0.018;
+  t += 0.025;
   requestAnimationFrame(drawHeart);
 }
 
