@@ -1,50 +1,109 @@
 <!DOCTYPE html>
-<html lang="zh‑CN">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF‑8">
-<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
-<title>r = 1 − cosθ</title>
-<!-- og标签，微信抓取卡片标题 -->
-<meta property="og:title" content="r = 1 − cosθ">
-<meta property="og:description" content="笛卡尔的数学爱心">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>笛卡尔函数</title>
+<meta property="og:title" content="笛卡尔函数">
+<meta property="og:description" content="r = 1 − cosθ">
 <style>
-*{margin:0;padding:0;box‑sizing:border‑box;}
-body{background:#000;min‑height:100vh;display:flex;justify‑content:center;align‑items:center;}
-canvas{width:92vw;height:92vh;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+body{
+  background:#ffffff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+canvas{
+  width:92vw;
+  height:92vh;
+}
 </style>
 </head>
 <body>
 <canvas id="heartCanvas"></canvas>
+
 <script>
 const canvas = document.getElementById('heartCanvas');
 const ctx = canvas.getContext('2d');
+
+let t = 0;
+
 function resize(){
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
-  drawHeart();
 }
-window.addEventListener('resize',resize);
+
+window.addEventListener('resize', resize);
 
 function drawHeart(){
   const w = canvas.width;
   const h = canvas.height;
   const cx = w / 2;
   const cy = h / 2;
-  const scale = Math.min(w,h)*0.36;
+  const scale = Math.min(w, h) * 0.38;
 
-  ctx.clearRect(0,0,w,h);
-  ctx.strokeStyle="#ff3a5c";
-  ctx.lineWidth=3.2;
+  ctx.clearRect(0, 0, w, h);
+
+  // 外层淡红光晕
   ctx.beginPath();
-  for(let th=0; th<=2*Math.PI; th+=0.008){
-      const r = 1 - Math.cos(th);
-      const x = cx + r * Math.cos(th) * scale;
-      const y = cy - r * Math.sin(th) * scale;
-      th===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.01){
+    const r = 1 - Math.cos(th);
+    const wave = Math.sin(th * 4 + t) * 0.015;
+    const x = cx + (r + wave) * Math.cos(th) * scale;
+    const y = cy - (r + wave) * Math.sin(th) * scale;
+    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   }
-  ctx.stroke();
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255, 60, 90, 0.18)';
+  ctx.shadowColor = '#ff3c5a';
+  ctx.shadowBlur = 35;
+  ctx.fill();
+
+  // 主体填充红心，带轻微波浪跳动
+  ctx.shadowBlur = 18;
+  ctx.beginPath();
+  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
+    const r = 1 - Math.cos(th);
+    const wave = Math.sin(th * 6 + t) * 0.008;
+    const x = cx + (r + wave) * Math.cos(th) * scale;
+    const y = cy - (r + wave) * Math.sin(th) * scale;
+    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#ff3c5a';
+  ctx.shadowColor = '#ff3c5a';
+  ctx.shadowBlur = 20;
+  ctx.fill();
+
+  // 内层柔和高光
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
+    const r = 1 - Math.cos(th);
+    const wave = Math.sin(th * 6 + t) * 0.006;
+    const x = cx + (r * 0.72 + wave) * Math.cos(th) * scale;
+    const y = cy - (r * 0.72 + wave) * Math.sin(th) * scale;
+    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255, 210, 220, 0.35)';
+  ctx.shadowColor = 'rgba(255, 210, 220, 0.6)';
+  ctx.shadowBlur = 15;
+  ctx.fill();
+
+  t += 0.018;
+  requestAnimationFrame(drawHeart);
 }
+
 resize();
+drawHeart();
 </script>
 </body>
 </html>
