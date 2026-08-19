@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh‑CN">
+<head>
+<meta charset="UTF‑8">
+<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+<title>r = 1 − cosθ</title>
+<!-- og标签，微信抓取卡片标题 -->
+<meta property="og:title" content="r = 1 − cosθ">
+<meta property="og:description" content="笛卡尔的数学爱心">
+<style>
+*{margin:0;padding:0;box‑sizing:border‑box;}
+body{background:#000;min‑height:100vh;display:flex;justify‑content:center;align‑items:center;}
+canvas{width:92vw;height:92vh;}
+</style>
+</head>
+<body>
+<canvas id="heartCanvas"></canvas>
+<script>
+const canvas = document.getElementById('heartCanvas');
+const ctx = canvas.getContext('2d');
+function resize(){
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  drawHeart();
+}
+window.addEventListener('resize',resize);
+
+function drawHeart(){
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w,h)*0.36;
+
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle="#ff3a5c";
+  ctx.lineWidth=3.2;
+  ctx.beginPath();
+  for(let th=0; th<=2*Math.PI; th+=0.008){
+      const r = 1 - Math.cos(th);
+      const x = cx + r * Math.cos(th) * scale;
+      const y = cy - r * Math.sin(th) * scale;
+      th===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+resize();
+</script>
+</body>
+</html>
