@@ -6,6 +6,7 @@
 <title>笛卡尔函数</title>
 <meta property="og:title" content="笛卡尔函数">
 <meta property="og:description" content="r = 1 − cosθ">
+<meta property="og:type" content="website">
 <style>
 *{
   margin:0;
@@ -48,21 +49,23 @@ function drawHeart(){
   const cx = w / 2;
   const cy = h / 2;
 
-  const baseScale = Math.min(w, h) * 0.38;
+  const baseScale = Math.min(w, h) * 0.35;
   const beatScale = 0.92 + Math.sin(t) * 0.08;
   const scale = baseScale * beatScale;
 
   ctx.clearRect(0, 0, w, h);
 
   ctx.beginPath();
-  for(let th = 0; th <= 2 * Math.PI + 0.02; th += 0.008){
-    const r = 1 - Math.cos(th);
-    //旋转180度，摆正标准爱心，尖角朝下
-    const x = cx + r * Math.cos(th + Math.PI / 2) * scale;
-    const y = cy + r * Math.sin(th + Math.PI / 2) * scale;
-    th === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  //标准正向爱心参数方程，瓣在上尖角朝下❤️
+  for(let th = 0; th <= 2*Math.PI; th += 0.01){
+    let x = 16 * Math.pow(Math.sin(th),3);
+    let y = 13 * Math.cos(th) - 5 * Math.cos(2*th) - 2 * Math.cos(3*th) - Math.cos(4*th);
+    const px = cx + x * scale * 0.045;
+    const py = cy - y * scale * 0.045;
+    th===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
   }
   ctx.closePath();
+
   ctx.fillStyle = '#ff001e';
   ctx.shadowColor = '#ff001e';
   ctx.shadowBlur = 22;
